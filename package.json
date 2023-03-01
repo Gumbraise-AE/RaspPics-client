@@ -7,7 +7,8 @@
     "dotenv": "^16.0.3",
     "form-data": "^4.0.0",
     "node-schedule": "^2.1.1",
-    "pi-camera": "^1.7.0"
+    "pi-camera": "^1.7.0",
+    "node-dht-sensor": "^0.4.3"
   },
   "description": "",
   "main": "rasppics.js",
