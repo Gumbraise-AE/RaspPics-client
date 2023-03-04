@@ -71,7 +71,7 @@ const job = schedule.scheduleJob('*/15 * * * * *', () => {
                     formData.append('rasp_pic[picFile]', imageStream);
 
                     axios({
-                        method: 'post', url: 'http://192.168.1.16:8000/api/rasp-pic', data: formData, headers: {
+                        method: 'post', url: 'http://rasppics.gumbraise.com/api/rasp-pic', data: formData, headers: {
                             ...formData.getHeaders(),
                             'Content-Type': 'multipart/form-data',
                             'Authorization': process.env.TOKEN
