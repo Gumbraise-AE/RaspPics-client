@@ -18,7 +18,7 @@ let hum = 5;
 console.info("[RASPPICS] Lancement de l'application");
 
 // Lire les données de température et d'humidité
-const job = schedule.scheduleJob('*/15 * * * * *', (fireDate) => {
+const job = schedule.scheduleJob('0/30 * * * *', (fireDate) => {
     sensor.read(sensorType, pin, (err, temperature, humidity) => {
         if (!err) {
             temp = `Temp. : ${temperature}°C`;
