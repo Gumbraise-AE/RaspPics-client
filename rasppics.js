@@ -12,10 +12,11 @@ const sensor = require('node-dht-sensor');
 const sensorType = 11;
 const pin = 4;
 
+let temp = 22;
+let hum = 5;
+
 // Lire les données de température et d'humidité
 const job = schedule.scheduleJob('*/15 * * * * *', () => {
-    let temp = null;
-    let hum = null;
     sensor.read(sensorType, pin, (err, temperature, humidity) => {
         if (!err) {
             temp = `Temp. : ${temperature}°C`;
