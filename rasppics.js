@@ -88,7 +88,7 @@ const job = schedule.scheduleJob('0/30 * * * *', (fireDate) => {
                         method: 'post', url: 'http://rasppics.gumbraise.com/api/rasp-pic', data: formData, headers: {
                             ...formData.getHeaders(),
                             'Content-Type': 'multipart/form-data',
-                            'Authorization': process.env.TOKEN
+                            'RAsPI': process.env.TOKEN
                         }
                     }).then(response => {
                         console.log(`[RASPPICS] [${fireDate}] Envoi de la photo : réussi`);
