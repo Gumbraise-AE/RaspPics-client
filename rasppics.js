@@ -15,18 +15,23 @@ const pin = 4;
 let temp = 22;
 let hum = 5;
 
+console.info("[RASPPICS] Lancement de l'application");
+
 // Lire les données de température et d'humidité
-const job = schedule.scheduleJob('*/15 * * * * *', () => {
+const job = schedule.scheduleJob('*/15 * * * * *', (fireDate) => {
     sensor.read(sensorType, pin, (err, temperature, humidity) => {
         if (!err) {
             temp = `Temp. : ${temperature}°C`;
             hum = `Hum. : ${humidity}%`;
+
+            console.log(`[RASPPICS] [${fireDate}] DHT11 : réussi`);
         } else {
-            console.log(`Echec de la lectured ela température et de l'humidité. Réessayer !`);
+            console.warn(`[RASPPICS] [${fireDate}] DHT11 : échec`);
         }
     });
 
     exec('systemctl --user stop fmp4streamer');
+    console.info(`[RASPPICS] [${fireDate}] Fermeture de fmp4streamer`);
 
     setTimeout(() => {
         const imagePath = `${__dirname}/image.jpg`;
@@ -34,8 +39,12 @@ const job = schedule.scheduleJob('*/15 * * * * *', () => {
             mode: 'photo', output: imagePath, width: 1280, height: 960, nopreview: true,
         });
 
+        console.info(`[RASPPICS] [${fireDate}] Prise de la photo`);
+
         myCamera.snap()
             .then(async (result) => {
+                console.log(`[RASPPICS] [${fireDate}] Photo : réussi`);
+
                 // Charger l'image dans Canvas
                 const image = await loadImage(imagePath);
                 const canvas = createCanvas(image.width, image.height);
@@ -61,14 +70,19 @@ const job = schedule.scheduleJob('*/15 * * * * *', () => {
                 });
                 stream.pipe(out);
 
+                console.log(`[RASPPICS] [${fireDate}] Ajout éléments sur la photo : réussi`);
+
                 setTimeout(() => {
                     exec('systemctl --user start fmp4streamer');
+                    console.info(`[RASPPICS] [${fireDate}] Relancement de fmp4streamer`);
                 }, 2000);
 
                 out.on('finish', () => {
                     const formData = new FormData();
                     const imageStream = fs.createReadStream(imagePath);
                     formData.append('rasp_pic[picFile]', imageStream);
+
+                    console.info(`[RASPPICS] [${fireDate}] Envoi de la photo au serveur`);
 
                     axios({
                         method: 'post', url: 'http://rasppics.gumbraise.com/api/rasp-pic', data: formData, headers: {
@@ -77,15 +91,14 @@ const job = schedule.scheduleJob('*/15 * * * * *', () => {
                             'Authorization': process.env.TOKEN
                         }
                     }).then(response => {
-                        console.log(response.data);
-
+                        console.log(`[RASPPICS] [${fireDate}] Envoi de la photo : réussi`);
                     }).catch(error => {
-                        console.error('Erreur lors de l\'envoi du fichier :', error);
+                        console.warn(`[RASPPICS] [${fireDate}] Envoi de la photo : échec`);
                     });
                 });
             })
             .catch((error) => {
-                console.error('Erreur lors de la prise de la photo :', error);
+                console.warn(`[RASPPICS] [${fireDate}] Photo : échec`);
             });
     }, 2000);
 });
