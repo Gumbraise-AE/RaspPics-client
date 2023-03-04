@@ -36,7 +36,7 @@ const job = schedule.scheduleJob('0/30 * * * *', (fireDate) => {
     setTimeout(() => {
         const imagePath = `${__dirname}/image.jpg`;
         let myCamera = new PiCamera({
-            mode: 'photo', output: imagePath, width: 1280, height: 960, nopreview: true,
+            mode: 'photo', output: imagePath, width: 1280, height: 960, nopreview: true, rotation: 180
         });
 
         console.info(`[RASPPICS] [${fireDate}] Prise de la photo`);
